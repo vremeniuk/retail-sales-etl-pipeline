@@ -1,8 +1,17 @@
 import os
+import logging
 from extract import extract_data
 from transform import clean_data, transform_data
 from validate import validate_data
 from metrics import calculate_metrics
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 
 RAW_PATH = "data/raw/sales_raw.csv"
@@ -12,34 +21,33 @@ ANALYTICS_PATH = "data/analytics/sales_analytics.csv"
 
 def run_pipeline():
 
-    print("Extracting data...")
+    logger.info("Extracting data...")
     df = extract_data(RAW_PATH)
 
-    print("Cleaning data...")
+    logger.info("Cleaning data...")
     df = clean_data(df)
 
-    print("Validating data...")
+    logger.info("Validating data...")
     validate_data(df)
 
-    print("Transforming data...")
+    logger.info("Transforming data...")
     df = transform_data(df)
 
-    print("Saving cleaned data...")
+    logger.info("Saving cleaned data...")
     os.makedirs("data/cleaned", exist_ok=True)
     df.to_csv(CLEAN_PATH, index=False)
 
-    print("Calculating metrics...")
+    logger.info("Calculating metrics...")
     metrics = calculate_metrics(df)
 
-    print("Saving analytics dataset...")
+    logger.info("Saving analytics dataset...")
     os.makedirs("data/analytics", exist_ok=True)
     df.to_csv(ANALYTICS_PATH, index=False)
 
-    print("\nMetrics:")
-    for key, value in metrics.items():
-        print(f"{key}: {value}")
+    logger.info("Pipeline completed successfully 🚀")
 
-    print("\nPipeline completed successfully 🚀")
+    for key, value in metrics.items():
+        logger.info(f"{key}: {value}")
 
 
 if __name__ == "__main__":
